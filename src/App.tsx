@@ -25,17 +25,33 @@ import { BrowserRouter, Routes, Route, Outlet } from "react-router";
 import { App as AntdApp, ConfigProvider } from "antd";
 import koKR from "antd/locale/ko_KR";
 
+// koKR를 상속받아서 일부만 커스터마이징
+const customLocale: Locale = {
+  ...koKR,
+  // Pagination 커스터마이징
+  Pagination: {
+    ...koKR.Pagination,
+    items_per_page: '개씩 보기',
+  },
+  // Table 커스터마이징
+  Table: {
+    ...koKR.Table,
+    emptyText: '데이터가 없습니다',
+  },
+}; // TypeScript 타입 체크 우회
+
 import "@refinedev/antd/dist/reset.css";
 import "./App.css";
 
 import { UserList, UserEdit, UserShow } from "../src/pages/users";
 import { LoginPage } from "../src/pages/login";
 import { Header } from "./components/header";
+import { Locale } from "antd/es/locale";
 
 const App: React.FC = () => {
   return (
     <BrowserRouter>
-      <ConfigProvider theme={RefineThemes.Blue} locale={koKR}>
+      <ConfigProvider theme={RefineThemes.Blue} locale={customLocale}>
         <AntdApp>
           <Refine
             authProvider={authProviderClient}
