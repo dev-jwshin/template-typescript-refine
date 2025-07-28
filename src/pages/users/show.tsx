@@ -31,7 +31,7 @@ export const UserShow = () => {
   };
 
   return (
-    <CustomShow title="사용자 상세 정보" isLoading={isLoading}>
+    <CustomShow isLoading={isLoading}>
       <Descriptions bordered column={1}>
         <Descriptions.Item label="ID">
           {record?.id}

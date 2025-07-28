@@ -15,6 +15,7 @@ import {
 
 import { authProviderClient } from "./providers/auth-provider";
 import { dataProvider } from "./providers/data-provider";
+import { i18nProvider } from "./providers/i18n-provider";
 import routerProvider, {
   NavigateToResource,
   CatchAllNavigate,
@@ -43,7 +44,7 @@ const customLocale: Locale = {
 import "@refinedev/antd/dist/reset.css";
 import "./App.css";
 
-import { UserList, UserEdit, UserShow } from "../src/pages/users";
+import { UserList, UserEdit, UserShow, UserCreate } from "../src/pages/users";
 import { LoginPage } from "../src/pages/login";
 import { Header } from "./components/header";
 import { Locale } from "antd/es/locale";
@@ -57,14 +58,16 @@ const App: React.FC = () => {
             authProvider={authProviderClient}
             dataProvider={dataProvider}
             routerProvider={routerProvider}
+            i18nProvider={i18nProvider}
             resources={[
               {
                 name: "users",
                 list: "/users",
                 show: "/users/show/:id",
                 edit: "/users/edit/:id",
+                create: "/users/create",
                 meta: {
-                  label: "사용자 관리",
+                  label: "사용자",
                 },
               },
             ]}
@@ -91,6 +94,7 @@ const App: React.FC = () => {
 
                 <Route path="/users">
                   <Route index element={<UserList />} />
+                  <Route path="create" element={<UserCreate />} />
                   <Route path="edit/:id" element={<UserEdit />} />
                   <Route path="show/:id" element={<UserShow />} />
                 </Route>

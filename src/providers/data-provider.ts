@@ -238,11 +238,11 @@ export const dataProvider: DataProvider = {
     };
   },
 
-  // 수정 (update) - nestjs-crud는 PUT 메서드 사용
+  // 수정 (update)
   update: async ({ resource, id, variables, meta }) => {
     const apiPath = getApiPath(resource);
     const response = await apiRequest(`${API_BASE_URL}${apiPath}/${id}`, {
-      method: "PUT", // 🔧 nestjs-crud는 PUT 메서드 사용
+      method: "PATCH",
       body: JSON.stringify(variables),
     });
 

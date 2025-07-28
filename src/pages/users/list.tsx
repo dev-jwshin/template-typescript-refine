@@ -169,7 +169,6 @@ export const UserList = () => {
 
   return (
     <CustomList 
-      title="사용자 관리"
       tableProps={tableProps}
       columns={columns}
     />

@@ -7,7 +7,7 @@ export const UserEdit = () => {
   const { formProps, saveButtonProps } = useForm();
 
   return (
-    <CustomEdit title="사용자 수정" saveButtonProps={saveButtonProps}>
+    <CustomEdit saveButtonProps={saveButtonProps}>
       <Form {...formProps} layout="vertical" className="space-y-4">
         <Form.Item
           label="이름"
