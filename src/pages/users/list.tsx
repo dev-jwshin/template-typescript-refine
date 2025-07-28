@@ -33,65 +33,69 @@ export const UserList = () => {
   };
 
   return (
-    <List>
-      <Table {...tableProps} rowKey="id">
-        <Table.Column
-          dataIndex="id"
-          title="ID"
-          width={80}
-        />
-        <Table.Column
-          dataIndex="name"
-          title="이름"
-          render={(value) => <TextField value={value} />}
-        />
-        <Table.Column
-          dataIndex="email"
-          title="이메일"
-          render={(value) => <TextField value={value} />}
-        />
-        <Table.Column
-          dataIndex="phone"
-          title="전화번호"
-          render={(value) => (
-            <TextField value={value || "-"} />
-          )}
-        />
-        <Table.Column
-          dataIndex="role"
-          title="역할"
-          render={(value) => (
-            <Tag color={getRoleColor(value)}>
-              {value === "admin" ? "관리자" : "사용자"}
-            </Tag>
-          )}
-        />
-        <Table.Column
-          dataIndex="provider"
-          title="로그인 방식"
-          render={(value) => (
-            <Tag color={getProviderColor(value)}>
-              {value?.toUpperCase()}
-            </Tag>
-          )}
-        />
-        <Table.Column
-          dataIndex="createdAt"
-          title="가입일"
-          render={(value) => <DateField value={value} format="YYYY-MM-DD" />}
-        />
-        <Table.Column
-          title="액션"
-          dataIndex="actions"
-          render={(_, record) => (
-            <Space>
-              <EditButton hideText size="small" recordItemId={record.id} />
-              <ShowButton hideText size="small" recordItemId={record.id} />
-              <DeleteButton hideText size="small" recordItemId={record.id} />
-            </Space>
-          )}
-        />
-      </Table>
-    </List>
+    <div className="tw-container">
+      <div className="tw-card">        
+        <List>
+          <Table {...tableProps} rowKey="id" className="shadow-sm">
+            <Table.Column
+              dataIndex="id"
+              title="ID"
+              width={80}
+            />
+            <Table.Column
+              dataIndex="name"
+              title="이름"
+              render={(value) => <TextField value={value} />}
+            />
+            <Table.Column
+              dataIndex="email"
+              title="이메일"
+              render={(value) => <TextField value={value} />}
+            />
+            <Table.Column
+              dataIndex="phone"
+              title="전화번호"
+              render={(value) => (
+                <TextField value={value || "-"} />
+              )}
+            />
+            <Table.Column
+              dataIndex="role"
+              title="역할"
+              render={(value) => (
+                <Tag color={getRoleColor(value)}>
+                  {value === "admin" ? "관리자" : "사용자"}
+                </Tag>
+              )}
+            />
+            <Table.Column
+              dataIndex="provider"
+              title="로그인 방식"
+              render={(value) => (
+                <Tag color={getProviderColor(value)}>
+                  {value?.toUpperCase()}
+                </Tag>
+              )}
+            />
+            <Table.Column
+              dataIndex="createdAt"
+              title="가입일"
+              render={(value) => <DateField value={value} format="YYYY-MM-DD" />}
+            />
+            <Table.Column
+              title="액션"
+              dataIndex="actions"
+              render={(_, record) => (
+                <Space>
+                  <EditButton hideText size="small" recordItemId={record.id} />
+                  <ShowButton hideText size="small" recordItemId={record.id} />
+                  <DeleteButton hideText size="small" recordItemId={record.id} />
+                </Space>
+              )}
+            />
+          </Table>
+        </List>
+      </div>
+    </div>
   );
 }; 

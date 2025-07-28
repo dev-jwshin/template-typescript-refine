@@ -1,0 +1,36 @@
+/* Tailwind CSS 지시문 */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Ant Design과 함께 사용하기 위한 커스텀 스타일 */
+.tw-reset {
+  /* Tailwind의 reset을 특정 요소에만 적용하고 싶을 때 사용 */
+  @apply box-border;
+}
+
+/* 필요한 경우 Ant Design 컴포넌트와 Tailwind 간의 충돌 해결 */
+.ant-btn {
+  box-sizing: border-box !important;
+}
+
+/* 유틸리티 클래스들 */
+.tw-container {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+.tw-card {
+  @apply bg-white rounded-lg shadow-sm border border-gray-200 p-6;
+}
+
+.tw-button {
+  @apply px-4 py-2 rounded-md font-medium focus:outline-none focus:ring-2 focus:ring-offset-2;
+}
+
+.tw-button-primary {
+  @apply tw-button bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500;
+}
+
+.tw-button-secondary {
+  @apply tw-button bg-gray-200 text-gray-900 hover:bg-gray-300 focus:ring-gray-500;
+}

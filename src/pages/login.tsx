@@ -26,25 +26,9 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        minHeight: "100vh",
-        background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-        padding: "20px",
-      }}
-    >
-      <Card
-        style={{
-          width: "100%",
-          maxWidth: "400px",
-          borderRadius: "12px",
-          boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
-        }}
-      >
-        <div style={{ textAlign: "center", marginBottom: "32px" }}>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600 p-5">
+      <Card className="w-full max-w-md rounded-xl shadow-2xl border-0">
+        <div className="text-center mb-8">
           <Title level={2} style={{ margin: 0, color: "#1677ff" }}>
             로그인
           </Title>
@@ -54,10 +38,6 @@ export const LoginPage: React.FC = () => {
           form={form}
           layout="vertical"
           onFinish={onFinish}
-          initialValues={{
-            email: "demo@refine.dev",
-            password: "demodemo",
-          }}
         >
           <Form.Item
             label="이메일"
@@ -85,12 +65,7 @@ export const LoginPage: React.FC = () => {
               htmlType="submit"
               loading={isLoading}
               size="large"
-              style={{
-                width: "100%",
-                height: "48px",
-                fontSize: "16px",
-                fontWeight: "500",
-              }}
+              className="w-full h-12 text-base font-medium"
             >
               {isLoading ? "로그인 중..." : "로그인"}
             </Button>

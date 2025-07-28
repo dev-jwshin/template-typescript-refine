@@ -46,7 +46,7 @@ export const authProviderClient: AuthProvider = {
 
       return {
         success: true,
-        redirectTo: "/",
+        redirectTo: "/users",
       };
     } catch (error) {
       return {
@@ -180,9 +180,9 @@ async function refreshToken(): Promise<boolean> {
     const response = await fetch(`${API_BASE_URL}/api/v1/admin/auth/sign/refresh`, {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${refreshTokenValue}`,
         "Content-Type": "application/json",
       },
+      body: JSON.stringify({ refreshToken: refreshTokenValue }),
     });
 
     if (response.ok) {
