@@ -8,17 +8,52 @@
   padding: 0 !important;
 }
 
-/* 페이지네이션 중앙 정렬 및 스타일링 */
+/* 페이지네이션 커스텀 레이아웃 */
 .ant-table-pagination {
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  padding: 16px 0 !important;
-  margin-top: 16px !important;
+  padding-top: 24px !important;
+  margin-top: 0px !important;
+  margin-block: 0 !important;
 }
 
 .ant-table-pagination .ant-pagination {
+  display: flex !important;
+  align-items: center !important;
+  width: 100% !important;
   margin: 0 !important;
+}
+
+/* showTotal - 왼쪽 */
+.ant-pagination .ant-pagination-total-text {
+  order: 1 !important;
+  flex: 1 !important;
+  text-align: left !important;
+  margin: 0 !important;
+}
+
+/* pagination buttons - 중앙 */
+.ant-pagination .ant-pagination-prev,
+.ant-pagination .ant-pagination-item,
+.ant-pagination .ant-pagination-next,
+.ant-pagination .ant-pagination-jump-prev,
+.ant-pagination .ant-pagination-jump-next {
+  order: 2 !important;
+}
+
+/* showSizeChanger - 오른쪽 */
+.ant-pagination .ant-pagination-options {
+  order: 3 !important;
+  flex: 1 !important;
+  text-align: right !important;
+  margin: 0 !important;
+}
+
+/* pagination buttons를 중앙 그룹으로 유지 */
+.ant-pagination .ant-pagination-prev {
+  margin-left: auto !important;
+}
+
+.ant-pagination .ant-pagination-next {
+  margin-right: auto !important;
 }
 
 /* 페이지네이션 아이템 스타일링 */
