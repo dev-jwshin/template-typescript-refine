@@ -1,2 +1,31 @@
 /* 앱 전역 스타일 */
 /* 필요한 커스텀 스타일을 여기에 추가하세요 */
+.ant-card {
+  box-shadow: none !important;
+}
+
+.ant-card-body {
+  padding: 0 !important;
+}
+
+/* 페이지네이션 중앙 정렬 및 스타일링 */
+.ant-table-pagination {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  padding: 16px 0 !important;
+  margin-top: 16px !important;
+}
+
+.ant-table-pagination .ant-pagination {
+  margin: 0 !important;
+}
+
+/* 페이지네이션 아이템 스타일링 */
+.ant-pagination .ant-pagination-item {
+  border-radius: 6px !important;
+}
+
+.ant-pagination .ant-pagination-item-active {
+  border-color: #1677ff !important;
+}

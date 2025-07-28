@@ -41,9 +41,9 @@ const refreshToken = async (): Promise<boolean> => {
     const response = await fetch(`${API_BASE_URL}/api/v1/admin/auth/sign/refresh`, {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${refreshTokenValue}`,
         "Content-Type": "application/json",
       },
+      body: JSON.stringify({ refreshToken: refreshTokenValue }),
     });
 
     if (response.ok) {
@@ -100,22 +100,22 @@ const apiRequest = async (url: string, options: RequestInit = {}): Promise<Respo
 export const dataProvider: DataProvider = {
   getApiUrl: () => API_BASE_URL,
 
-  // 목록 조회 (index)
+  // 목록 조회 (index) - nestjs-crud 사양에 맞게 수정
   getList: async ({ resource, pagination, sorters, filters, meta }) => {
     const apiPath = getApiPath(resource);
     const url = new URL(`${API_BASE_URL}${apiPath}`);
 
-    // 페이지네이션 처리 (커서 기반)
+    // 🔧 nestjs-crud 페이지네이션 처리 (page[number] & page[size])
     if (pagination) {
-      if (pagination.current && pagination.current > 1 && meta?.nextCursor) {
-        url.searchParams.append("cursor", meta.nextCursor);
-      }
-      if (pagination.pageSize) {
-        url.searchParams.append("limit", pagination.pageSize.toString());
-      }
+      const currentPage = pagination.current || 1;
+      const pageSize = pagination.pageSize || 10;
+
+      // nestjs-crud 표준: page[number] & page[size]
+      url.searchParams.append("page[number]", currentPage.toString());
+      url.searchParams.append("page[size]", pageSize.toString());
     }
 
-    // 정렬 처리
+    // 정렬 처리 (기존과 동일)
     if (sorters && sorters.length > 0) {
       const sortParams = sorters.map(sorter =>
         sorter.order === "desc" ? `-${sorter.field}` : sorter.field
@@ -123,7 +123,7 @@ export const dataProvider: DataProvider = {
       url.searchParams.append("sort", sortParams);
     }
 
-    // 필터 처리
+    // 🔧 nestjs-crud 필터 처리 (filter[field_operator]=value)
     if (filters && filters.length > 0) {
       filters.forEach(filter => {
         if (filter.operator === "eq") {
@@ -142,8 +142,25 @@ export const dataProvider: DataProvider = {
           url.searchParams.append(`filter[${filter.field}_lt]`, String(filter.value));
         } else if (filter.operator === "in") {
           url.searchParams.append(`filter[${filter.field}_in]`, Array.isArray(filter.value) ? filter.value.join(",") : String(filter.value));
+        } else if (filter.operator === "between") {
+          // nestjs-crud의 between 연산자 지원
+          const values = Array.isArray(filter.value) ? filter.value : [filter.value];
+          url.searchParams.append(`filter[${filter.field}_between]`, values.join(","));
+        } else if (filter.operator === "startswith") {
+          url.searchParams.append(`filter[${filter.field}_start]`, String(filter.value));
+        } else if (filter.operator === "endswith") {
+          url.searchParams.append(`filter[${filter.field}_end]`, String(filter.value));
+        } else if (filter.operator === "null") {
+          url.searchParams.append(`filter[${filter.field}_null]`, "true");
+        } else if (filter.operator === "nnull") {
+          url.searchParams.append(`filter[${filter.field}_not_null]`, "true");
         }
       });
+    }
+
+    // 🆕 관계 포함 처리 (include 파라미터)
+    if (meta?.include && Array.isArray(meta.include)) {
+      url.searchParams.append("include", meta.include.join(","));
     }
 
     const response = await apiRequest(url.toString());
@@ -155,20 +172,39 @@ export const dataProvider: DataProvider = {
 
     const responseData = await response.json();
 
+    // 🔧 nestjs-crud 응답 구조에 맞게 수정
+    const metadata = responseData.metadata || {};
+    const paginationData = metadata.pagination || {};
+
     return {
       data: responseData.data,
-      total: responseData.metadata?.pagination?.total || responseData.data.length,
+      total: paginationData.total || responseData.data.length,
       meta: {
-        nextCursor: responseData.metadata?.pagination?.nextCursor,
-        totalPages: responseData.metadata?.pagination?.totalPages,
+        // nestjs-crud 메타데이터 전달
+        page: paginationData.page || 1,
+        pages: paginationData.pages || paginationData.totalPages || 1,
+        total: paginationData.total || responseData.data.length,
+        offset: paginationData.offset,
+        nextCursor: paginationData.nextCursor,
+        operation: metadata.operation,
+        timestamp: metadata.timestamp,
+        affectedCount: metadata.affectedCount,
+        includedRelations: metadata.includedRelations,
       },
     };
   },
 
-  // 단일 조회 (show)
+  // 단일 조회 (show) - include 지원 추가
   getOne: async ({ resource, id, meta }) => {
     const apiPath = getApiPath(resource);
-    const response = await apiRequest(`${API_BASE_URL}${apiPath}/${id}`);
+    const url = new URL(`${API_BASE_URL}${apiPath}/${id}`);
+
+    // 🆕 관계 포함 처리
+    if (meta?.include && Array.isArray(meta.include)) {
+      url.searchParams.append("include", meta.include.join(","));
+    }
+
+    const response = await apiRequest(url.toString());
 
     if (!response.ok) {
       const errorData = await response.json();
@@ -202,11 +238,11 @@ export const dataProvider: DataProvider = {
     };
   },
 
-  // 수정 (update)
+  // 수정 (update) - nestjs-crud는 PUT 메서드 사용
   update: async ({ resource, id, variables, meta }) => {
     const apiPath = getApiPath(resource);
     const response = await apiRequest(`${API_BASE_URL}${apiPath}/${id}`, {
-      method: "PATCH",
+      method: "PUT", // 🔧 nestjs-crud는 PUT 메서드 사용
       body: JSON.stringify(variables),
     });
 
@@ -234,7 +270,7 @@ export const dataProvider: DataProvider = {
       throw new Error(Array.isArray(errorData.message) ? errorData.message.join(", ") : errorData.message || "데이터를 삭제할 수 없습니다");
     }
 
-    // 삭제 성공 시 응답이 없을 수도 있으므로 체크
+    // 🔧 nestjs-crud 삭제 응답 처리
     let responseData;
     try {
       responseData = await response.json();
@@ -248,11 +284,18 @@ export const dataProvider: DataProvider = {
     };
   },
 
-  // 다중 조회 (getMany) - 선택적 구현
+  // 다중 조회 (getMany) - include 지원 추가
   getMany: async ({ resource, ids, meta }) => {
     const apiPath = getApiPath(resource);
-    const promises = ids.map(id =>
-      apiRequest(`${API_BASE_URL}${apiPath}/${id}`)
+    const promises = ids.map(id => {
+      const url = new URL(`${API_BASE_URL}${apiPath}/${id}`);
+
+      // 관계 포함 처리
+      if (meta?.include && Array.isArray(meta.include)) {
+        url.searchParams.append("include", meta.include.join(","));
+      }
+
+      return apiRequest(url.toString())
         .then(async response => {
           if (response.ok) {
             const data = await response.json();
@@ -260,8 +303,8 @@ export const dataProvider: DataProvider = {
           }
           return null;
         })
-        .catch(() => null)
-    );
+        .catch(() => null);
+    });
 
     const results = await Promise.all(promises);
     const validResults = results.filter(result => result !== null);
@@ -270,6 +313,10 @@ export const dataProvider: DataProvider = {
       data: validResults,
     };
   },
+
+  // 💡 Upsert와 복구는 custom 메서드로 사용 가능:
+  // - dataProvider.custom({ url: "users/upsert", method: "POST", payload: data })
+  // - dataProvider.custom({ url: "users/123/recover", method: "POST" })
 
   // 커스텀 메서드 (선택적)
   custom: async ({ url, method = "GET", payload, query, headers, meta }) => {
