@@ -1,5 +1,7 @@
 import React from "react";
 import { Edit, EditProps } from "@refinedev/antd";
+import { Button } from "antd";
+import { ReloadOutlined } from "@ant-design/icons";
 import { useAutoTitle } from "../../hooks/useAutoTitle";
 
 interface CustomEditProps extends Omit<EditProps, "breadcrumb" | "goBack" | "title"> {
@@ -22,6 +24,16 @@ export const CustomEdit: React.FC<CustomEditProps> = ({
           title={finalTitle}
           breadcrumb={false}
           goBack={false}
+          headerButtons={({ refreshButtonProps }) => 
+            refreshButtonProps ? (
+              <Button 
+                icon={<ReloadOutlined />}
+                onClick={refreshButtonProps.onClick}
+              >
+                새로고침
+              </Button>
+            ) : null
+          }
           {...props}
         >
           {children}

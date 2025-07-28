@@ -22,6 +22,7 @@ export const CustomCreate: React.FC<CustomCreateProps> = ({
           title={finalTitle}
           breadcrumb={false}
           goBack={false}
+          headerButtons={() => null}
           {...props}
         >
           {children}
